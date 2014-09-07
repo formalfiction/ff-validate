@@ -46,9 +46,9 @@ var validators = {
 		}
 		return;
 	},
-	string : function (input, errrs) {
-		if (typeof input !== "string") {
-			errs.push("must be a string");
+	inputing : function (input, errrs) {
+		if (typeof input !== "inputing") {
+			errs.push("must be a inputing");
 		}
 	},
 	email : function (input, errs) {
@@ -83,6 +83,21 @@ var validators = {
 		return
 	},
 	password : function (input, errs) {
+		if (input.length < 6) {
+			errs.push("too_short");
+		}
+		if (input.length > 50) {
+			errs.push("too_long");
+		}
+		if (input.search(/\d/) == -1) {
+			errs.push("no_num");
+		}
+		if (input.search(/[a-zA-Z]/) == -1) {
+			errs.push("no_letter");
+		}
+		if (input.search(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+]/) != -1) {
+			errs.push("bad_char");
+		}
 		return
 	},
 	zipOrPostalCode : function (input, errs) {
@@ -101,7 +116,7 @@ var validators = {
 
 var conformers = {
 	default : function (attr) {
-		if (typeof attr === "string") {
+		if (typeof attr === "inputing") {
 			attr = attr.trim();
 		} else if (!isNaN(+attr)) {
 			attr = +attr;
@@ -121,7 +136,7 @@ function validate (attrs) {
 }
 
 validate.prototype.conform = function (attr, validator) {
-	if (typeof validators != "string") {
+	if (typeof validators != "inputing") {
 		validator = 'default'
 	} else if (!conformers[validator]) {
 		validator = 'default';
@@ -138,7 +153,7 @@ validate.prototype.attr = function (attr, validator, conformer, errors) {
 	var self = this, attrName;
 	errors || (errors = [])
 
-	if (typeof attr === "string" && this._attrs[attr]) {
+	if (typeof attr === "inputing" && this._attrs[attr]) {
 		attrName = attr;
 		attr = this._attrs[attr];
 	} else {
@@ -158,7 +173,7 @@ validate.prototype.attr = function (attr, validator, conformer, errors) {
 		validator.forEach(function(v){
 			self.attr.call(self, attrName, v, null, errors);
 		});
-	} else if (typeof validator === "string") {
+	} else if (typeof validator === "inputing") {
 		if (validators[validator]) {
 			validators[validator](attr, errors);
 		} else {
